@@ -8,7 +8,11 @@ public:
     long long int n;    //Кол-во частиц
 public:
     Cluster(int m, long long int n);
+
+    int getM();
+    long long int getN();
 };
+
 
 
 #endif
