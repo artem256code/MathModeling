@@ -2,10 +2,14 @@
 #include <iostream>
 #include <sstream>
 #include <cstring>
+#include <cmath>
 
 #include "model.hpp"
 
 Model::Model(int V, int M, int Y, int N, std::string pathToClusters): V(V), M(M), Y(Y), N(N) {
+    m = 0;                  // Инициализируем массу
+    p = M / (double) V;     // Рассчитываем долю
+
     std::ifstream fileWithClusters(pathToClusters);
     // Если файл не найден
     if(!fileWithClusters) {
@@ -28,9 +32,30 @@ Model::Model(int V, int M, int Y, int N, std::string pathToClusters): V(V), M(M)
             ss >> num;
             numbers[j] = std::stoi(num);
         }
-
+        m += numbers[0] * numbers[1];
         fraction.push_back(Cluster(numbers[0], numbers[1]));    // Заполнили кластер
     }
-
 }
 
+
+double Model::getProbabilityOfConvergence(int weightOfCluster1, int weightOfCluster2){
+    double w12 = pow(pow(weightOfCluster1, 1/3.0) + pow(weightOfCluster2, 1/3.0), 3);
+    double result = p * w12 /  m;
+    return result;
+}
+
+
+void Model::simulateOneStepForConglutination(){
+    for(std::list<Cluster>::iterator i = fraction.begin(); i != fraction.end(); i++){
+        for(std::list<Cluster>::iterator j = i; j != fraction.end(); j++){
+            float p = getProbabilityOfConvergence(i->getM(), j->getM()) * 100;
+        }
+    }
+}
+
+
+void Model::start(){
+    for(int i = 0; i < N; i++){
+        simulateOneStepForConglutination();
+    }
+}
