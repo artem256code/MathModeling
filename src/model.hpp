@@ -5,7 +5,7 @@
 #include <list>
 
 #include "cluster.hpp"
-
+#include "../tests/tests.hpp"
 
 
 class Model{
@@ -15,6 +15,7 @@ private:
     int numberOfClusters;           //Текущее кол-во кластеров
     int m;                          //Масса всего вещества
     double p;                       //Доля вещества в пространстве
+    double S;                       //Влияет на количество образуемых кластеров при перестройке
     std::list<Cluster> fraction;    //Список фракций
 private:
     /**
@@ -27,7 +28,14 @@ private:
      * @param weightOfCluster2              - Вес второго кластера
      * @return                              Возвращает вероятность
      */
-    double getProbabilityOfConvergence(int weightOfCluster1, int weightOfCluster2);
+    double getProbabilityOfConvergence(int ma, int mb);
+    /**
+     * @brief getNumberOfNewClustersInFraction  Количество новых кластеров при слипании двух фракций
+     * @param fraction1                         - Первая фракция
+     * @param fraction2                         - Вторая фракция
+     * @return                                  Возвращает целое количество новых кластеров
+     */
+    int getNumberOfNewClustersInFraction(Cluster &fraction1, Cluster &fraction2);
 public:
     /**
      * @brief Конструктор, принимающий информацию о кластерах из файла
@@ -43,6 +51,8 @@ public:
      * @brief Запуск моделирования
      */
     void start();
+
+    friend Test;
 };
 
 #endif

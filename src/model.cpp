@@ -11,6 +11,7 @@ Model::Model(int V, int M, int Y, int N, std::string pathToClusters): V(V), M(M)
     m = 0;                  // Инициализируем массу
     p = M / (double) V;     // Рассчитываем долю
 
+
     std::ifstream fileWithClusters(pathToClusters);
     // Если файл не найден
     if(!fileWithClusters) {
@@ -36,6 +37,7 @@ Model::Model(int V, int M, int Y, int N, std::string pathToClusters): V(V), M(M)
         m += numbers[0] * numbers[1];
         fraction.push_back(Cluster(numbers[0], numbers[1]));    // Заполнили кластер
     }
+    S = Y * p / m;                  // Вычисляем тот самый коэфицент 'S'
 }
 
 
@@ -60,6 +62,19 @@ void Model::simulateOneStepForConglutination(){
     }
 }
 
+int Model::getNumberOfNewClustersInFraction(Cluster &fraction1, Cluster &fraction2){
+    double result;
+    // Если массы фракций равны, то производим расчёт по этой формуле
+    if(fraction1.getM() == fraction2.getM()){
+        result = S * 0.5 * fraction1.getN()*(fraction1.getN() - 1) *
+                 pow(pow(fraction1.getM(), 1/3.0) + pow(fraction1.getM(), 1/3.0), 3);
+        return result;
+    }
+    // Иначе по этой формуле
+    result = S * (fraction1.getN() * fraction2.getN()) *
+             pow(pow(fraction1.getM(), 1/3.0) + pow(fraction2.getM(), 1/3.0), 3);
+    return result;
+}
 
 void Model::start(){
     for(int i = 0; i < N; i++){
