@@ -7,6 +7,7 @@
 #include "model.hpp"
 
 Model::Model(int V, int M, int Y, int N, std::string pathToClusters): V(V), M(M), Y(Y), N(N) {
+    std::srand(N);          // Привязываем ГПСЧ к кол-ву прогонов
     m = 0;                  // Инициализируем массу
     p = M / (double) V;     // Рассчитываем долю
 
@@ -38,17 +39,23 @@ Model::Model(int V, int M, int Y, int N, std::string pathToClusters): V(V), M(M)
 }
 
 
-double Model::getProbabilityOfConvergence(int weightOfCluster1, int weightOfCluster2){
-    double w12 = pow(pow(weightOfCluster1, 1/3.0) + pow(weightOfCluster2, 1/3.0), 3);
-    double result = p * w12 /  m;
+double Model::getProbabilityOfConvergence(int ma, int mb){
+    double result = p * pow(pow(ma, 1/3.0) + pow(mb, 1/3.0), 3) /  m;
     return result;
 }
 
 
 void Model::simulateOneStepForConglutination(){
-    for(std::list<Cluster>::iterator i = fraction.begin(); i != fraction.end(); i++){
-        for(std::list<Cluster>::iterator j = i; j != fraction.end(); j++){
-            float p = getProbabilityOfConvergence(i->getM(), j->getM()) * 100;
+    for(std::list<Cluster>::iterator cluster1 = fraction.begin(); cluster1 != fraction.end(); cluster1++){
+        for(std::list<Cluster>::iterator cluster2 = cluster1; cluster2 != fraction.end(); cluster2++){
+            // Вычислили вероятность сближения cluster1 и cluster2
+            double p = getProbabilityOfConvergence(cluster1->getM(), cluster1->getM());
+            // Вероятность попадания в вероятность
+            double rand = ((double)(std::rand()) / RAND_MAX);
+            // Если попали в вероятность, то перестраиваем кластеры, симулируя слипание
+            if(p >= rand){
+                // Some code...
+            }
         }
     }
 }
