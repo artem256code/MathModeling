@@ -1,6 +1,8 @@
 #ifndef TESTS_HPP
 #define TESTS_HPP
 
+#include "../src/cluster.hpp"
+
 class Test{
 private:
     /**
@@ -8,6 +10,7 @@ private:
      * @return  Закрывает программу, если тест не пройден или возвращает 0
      */
     int testGetProbabilityOfConvergence();
+    int testGetNumberOfNewClustersInFraction(Cluster cluster1, Cluster cluster2, int testChecker);
 public:
     /**
      * @brief   Вызывает все тесты
