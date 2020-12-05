@@ -10,6 +10,15 @@ private:
      * @return  Закрывает программу, если тест не пройден или возвращает 0
      */
     int testGetProbabilityOfConvergence();
+
+
+    /**
+     * @brief Проверка функции GetNumberOfNewClustersInFraction
+     * @param cluster1      - первый кластер
+     * @param cluster2      - второй кластер
+     * @param testChecker   - кластер который должен получиться
+     * @return              - Закрывает программу, если тест не пройден или возвращает 0
+     */
     int testGetNumberOfNewClustersInFraction(Cluster cluster1, Cluster cluster2, int testChecker);
 public:
     /**
