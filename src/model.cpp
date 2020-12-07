@@ -77,7 +77,7 @@ int Model::getNumberOfNewClustersInFraction(Fraction &fraction1, Fraction &fract
     return result;
 }
 
-void Model::start(){
+void Model::simulate(){
     for(int i = 0; i < N; i++){
         simulateOneStepForConglutination();
     }
