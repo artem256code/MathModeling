@@ -17,6 +17,8 @@ private:
     double p;                                   //Доля вещества в пространстве
     double S;                                   //Влияет на количество образуемых кластеров при перестройке
     std::list<Fraction> fractions;              //Список фракций
+    std::list<Fraction> newFractions;           //Список ново-созданных фракций
+    std::list<Fraction> fractionsForRemove;     //Список фракций для удаления
 private:
     /**
      * @brief Симуляция одного шага моделирования программы
@@ -43,9 +45,33 @@ private:
 
 
     /**
-     * @brief restructingOfGroup    Перестраивает список фракций 'fracions', моделируя слипание
+     * @brief findFraction          Ищет фракцию по массе в списке 'fraction'
+     * @param list                  - ссылка на список в которм ищется фракция
+     * @param m                     - масса кластера в фракции
+     * @return                      Возвращает итератор на найденную фракцию или итератор на конец списка
      */
-    void restructingOfGroup();
+    std::list<Fraction>::iterator findFraction(std::list<Fraction> &list,int m);
+
+    /**
+    * @brief addFractionInList      Добавляет новую фракцию в список для добавления
+    * @param list                           - cписок в который будет добавлена фракция
+    * @param m                              - Масса нового вещества
+    * @param n                              - Количество нового вещества
+    */
+    void addFractionInList(std::list<Fraction> &list, int m, long long int n);
+    
+    /**
+     * @brief reductionClusterInFraction    Уменьшает количество кластеров в полученной фракции
+     * @param fraction                      - Фракция в которой уменьшится количество кластеров
+     * @param delta                         - Число на которое уменьшится количество кластеров
+     */
+    void reductionClusterInFraction(std::list<Fraction>::iterator fraction, int delta);
+
+
+    /**
+     * @brief restructingOfFractions  Перестраивает список фракций 'fracions', моделируя слипание
+     */
+    void restructingOfFractions();
 
 
 public:
@@ -58,6 +84,11 @@ public:
      * @param pathToFractions   - путь до файла с описанием фракций
      */
     Model(int V, int M, int Y, int N, std::string pathToFractions);
+
+    /**
+     * @brief printFraction     Распечатывает фракции
+     */
+    void printFraction();
 
     /**
      * @brief Запуск моделирования

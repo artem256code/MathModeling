@@ -49,18 +49,32 @@ double Model::getProbabilityOfConvergence(int ma, int mb){
 
 void Model::simulateOneStepForConglutination(){
     for(std::list<Fraction>::iterator fraction1 = fractions.begin(); fraction1 != fractions.end(); fraction1++){
+        if(fraction1->getN() <= 0) continue;    // Если в данной фракции нет кластеров;
         for(std::list<Fraction>::iterator fraction2 = fraction1; fraction2 != fractions.end(); fraction2++){
+            if(fraction2->getN() <= 0) continue; // Если в данной фракции нет кластеров;
             // Вычислили вероятность сближения двух кластеров из фракций 'fraction1' и 'fraction2'
             double p = getProbabilityOfConvergence(fraction1->getM(), fraction2->getM());
             // Вероятность попадания в вероятность
             double rand = ((double)(std::rand()) / RAND_MAX);
             // Если попали в вероятность, то перестраиваем кластеры, симулируя слипание
             if(p >= rand){
-                // Получили кол-во новых кластеров образованных при слипании 
+                // Получили кол-во новых кластеров образованных при слипании и их массу
                 int n = getNumberOfNewClustersInFraction(*fraction1, *fraction2);
+                int m = fraction1->getM() + fraction2->getM();
+                if(n > 0){
+                    addFractionInList(newFractions,m, n);       // Добавили фракцию {m | n} в 'очередь' на добавление
+                    reductionClusterInFraction(fraction1, n);   // Убавили кол-во кластеров в фракции №1
+                    reductionClusterInFraction(fraction2, n);   // Убавили кол-во кластеров в фракции №2
+                    // Если фракции распались, то добавляем их в список для последующ. удаления
+                    if(fraction1->getN() <= 0)  addFractionInList(fractionsForRemove, fraction1->getM(), n);
+                    if(fraction2->getN() <= 0)  addFractionInList(fractionsForRemove, fraction2->getM(), n);
+                }
+
             }
         }
     }
+    // Выполнили перестройку всех фракций
+    restructingOfFractions();
 }
 
 int Model::getNumberOfNewClustersInFraction(Fraction &fraction1, Fraction &fraction2){
@@ -77,8 +91,54 @@ int Model::getNumberOfNewClustersInFraction(Fraction &fraction1, Fraction &fract
     return result;
 }
 
+void Model::addFractionInList(std::list<Fraction> &list, int m, long long int n){
+    // Ищем есть ли уже фракция с массой 'm' в списке
+    std::list<Fraction>::iterator searhIter = findFraction(list, m);
+
+    // И если есть, то просто меняем кол-во кластеров
+    if(searhIter != list.end())            searhIter->setN(searhIter->getN() + n);
+    // Иначе добавляем новую фракцию
+    else                                   list.push_back(Fraction(m, n));
+}
+
+void Model::reductionClusterInFraction(std::list<Fraction>::iterator fraction, int delta){
+    fraction->setN(fraction->getN() - delta);
+}
+
+void Model::restructingOfFractions(){
+    // Удалили фракции
+    for(std::list<Fraction>::iterator iter = fractionsForRemove.begin(); iter != fractionsForRemove.end(); iter++){
+        std::list<Fraction>::iterator removeIter = findFraction(fractions,iter->getM());
+        fractions.erase(removeIter);
+    }
+    // Добавили фракции
+    for(std::list<Fraction>::iterator iter = newFractions.begin(); iter != newFractions.end(); iter++){
+        addFractionInList(fractions, iter->getM(), iter->getN());
+    }
+
+    // Очищаем временные списки
+    newFractions.clear();
+    fractionsForRemove.clear();
+}
+
+
+std::list<Fraction>::iterator Model::findFraction(std::list<Fraction> &list,int m){
+    for(std::list<Fraction>::iterator iter = list.begin(); iter != list.end(); iter++){
+        if(iter->getM() == m)   return iter;
+    }
+    return list.end();
+}
+
+void Model::printFraction(){
+    for(std::list<Fraction>::iterator iter = fractions.begin(); iter != fractions.end(); iter++){
+        std::cout << "{(" << iter->getM() << "|" << iter->getN() << ")}" << std::endl;
+    }
+    std::cout << std::endl;
+}
+
 void Model::simulate(){
     for(int i = 0; i < N; i++){
         simulateOneStepForConglutination();
+        printFraction();
     }
 }
