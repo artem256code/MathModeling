@@ -3,10 +3,10 @@
 #include <sstream>
 #include <cstring>
 #include <cmath>
-
+#include <stdio.h>
 #include "model.hpp"
 
-Model::Model(int V, int M, int Y, int N, std::string pathToFractions): V(V), M(M), Y(Y), N(N) {
+Model::Model(int V, int M, double Y, int N, std::string pathToFractions): V(V), M(M), Y(Y), N(N) {
     std::srand(N);          // Привязываем ГПСЧ к кол-ву прогонов
     m = 0;                  // Инициализируем массу
     p = M / (double) V;     // Рассчитываем долю
@@ -41,79 +41,30 @@ Model::Model(int V, int M, int Y, int N, std::string pathToFractions): V(V), M(M
 }
 
 
-double Model::getProbabilityOfConvergence(int ma, int mb){
-    double result = p * pow(pow(ma, 1/3.0) + pow(mb, 1/3.0), 3) /  m;
-    return result;
+double Model::getPab(int ma, int mb){
+    return p * pow(pow(ma, 1/3.0) + pow(mb, 1/3.0), 3) /  m;
 }
 
-
-void Model::simulateOneStepForConglutination(){
-    for(std::list<Fraction>::iterator fraction1 = fractions.begin(); fraction1 != fractions.end(); fraction1++){
-        if(fraction1->getN() <= 0) continue;    // Если в данной фракции нет кластеров;
-        for(std::list<Fraction>::iterator fraction2 = fraction1; fraction2 != fractions.end(); fraction2++){
-            if(fraction2->getN() <= 0) continue; // Если в данной фракции нет кластеров;
-            // Вычислили вероятность сближения двух кластеров из фракций 'fraction1' и 'fraction2'
-            double p = getProbabilityOfConvergence(fraction1->getM(), fraction2->getM());
-            // Вероятность попадания в вероятность
-            double rand = ((double)(std::rand()) / RAND_MAX);
-            // Если попали в вероятность, то перестраиваем кластеры, симулируя слипание
-            if(p >= rand){
-                // Получили кол-во новых кластеров образованных при слипании и их массу
-                int n = getNumberOfNewClustersInFraction(*fraction1, *fraction2);
-                int m = fraction1->getM() + fraction2->getM();
-                if(n > 0){
-                    addFractionInList(newFractions,m, n);       // Добавили фракцию {m | n} в 'очередь' на добавление
-                    reductionClusterInFraction(fraction1, n);   // Убавили кол-во кластеров в фракции №1
-                    reductionClusterInFraction(fraction2, n);   // Убавили кол-во кластеров в фракции №2
-                    // Если фракции распались, то добавляем их в список для последующ. удаления
-                    if(fraction1->getN() <= 0)  addFractionInList(fractionsForRemove, fraction1->getM(), n);
-                    if(fraction2->getN() <= 0)  addFractionInList(fractionsForRemove, fraction2->getM(), n);
-                }
-
-            }
-        }
-    }
-    // Выполнили перестройку всех фракций
-    restructingOfFractions();
+int Model::getNab(Fraction fraction1, Fraction fraction2){
+    return S * (fraction1.getN() * fraction2.getN()) *
+            pow(pow(fraction1.getM(), 1/3.0) + pow(fraction2.getM(), 1/3.0), 3);
 }
 
-int Model::getNumberOfNewClustersInFraction(Fraction &fraction1, Fraction &fraction2){
-    double result;
-    // Если массы фракций равны, то производим расчёт по этой формуле
-    if(fraction1.getM() == fraction2.getM()){
-        result = S * 0.5 * fraction1.getN()*(fraction1.getN() - 1) *
-                 pow(pow(fraction1.getM(), 1/3.0) + pow(fraction1.getM(), 1/3.0), 3);
-        return result;
-    }
-    // Иначе по этой формуле
-    result = S * (fraction1.getN() * fraction2.getN()) *
-             pow(pow(fraction1.getM(), 1/3.0) + pow(fraction2.getM(), 1/3.0), 3);
-    return result;
+int Model::getNaa(Fraction fraction){
+    return S * 0.5 * fraction.getN()*(fraction.getN() - 1) *
+            pow(pow(fraction.getM(), 1/3.0) + pow(fraction.getM(), 1/3.0), 3);
 }
 
-void Model::addFractionInList(std::list<Fraction> &list, int m, long long int n){
-    // Ищем есть ли уже фракция с массой 'm' в списке
-    std::list<Fraction>::iterator searhIter = findFraction(list, m);
-
-    // И если есть, то просто меняем кол-во кластеров
-    if(searhIter != list.end())            searhIter->setN(searhIter->getN() + n);
-    // Иначе добавляем новую фракцию
-    else                                   list.push_back(Fraction(m, n));
-}
-
-void Model::reductionClusterInFraction(std::list<Fraction>::iterator fraction, int delta){
-    fraction->setN(fraction->getN() - delta);
-}
 
 void Model::restructingOfFractions(){
     // Удалили фракции
-    for(std::list<Fraction>::iterator iter = fractionsForRemove.begin(); iter != fractionsForRemove.end(); iter++){
-        std::list<Fraction>::iterator removeIter = findFraction(fractions,iter->getM());
-        fractions.erase(removeIter);
+    for(auto  iter = fractionsForRemove.begin(); iter != fractionsForRemove.end(); iter++){
+        auto removeIter = findFraction(fractions,iter->getM());
+        if(removeIter != fractions.end()) fractions.erase(removeIter);
     }
     // Добавили фракции
-    for(std::list<Fraction>::iterator iter = newFractions.begin(); iter != newFractions.end(); iter++){
-        addFractionInList(fractions, iter->getM(), iter->getN());
+    for(auto iter = newFractions.begin(); iter != newFractions.end(); iter++){
+        fractions.push_back(*iter);
     }
 
     // Очищаем временные списки
@@ -129,16 +80,70 @@ std::list<Fraction>::iterator Model::findFraction(std::list<Fraction> &list,int 
     return list.end();
 }
 
+
+void Model::simulateOneStepForConglutination(){
+    for(auto fraction1 = fractions.begin(); fraction1 != fractions.end(); fraction1++){
+        if(fraction1->getN() <= 0) continue;    // Если в данной фракции нет кластеров;
+        for(auto fraction2 = fraction1; fraction2 != fractions.end(); fraction2++){
+            if(fraction2->getN() <= 0) continue; // Если в данной фракции нет кластеров;
+            // Вычислили вероятность сближения двух кластеров из фракций 'fraction1' и 'fraction2'
+            double p = getPab(fraction1->getM(), fraction2->getM());
+            // Вероятность попадания в вероятность
+            double rand = ((double)(std::rand()) / RAND_MAX);
+            rand = 0;
+            // Если попали в вероятность, то перестраиваем кластеры, симулируя слипание
+            if(p >= rand){
+                // Получили кол-во новых кластеров образованных при слипании и их массу
+                int m = fraction1->getM() + fraction2->getM();
+                int n = 0;
+                // Вычисляем кол-во новых кластеров по одной из двух формул
+                if(fraction1 == fraction2)  n = getNab(*fraction1, *fraction2);
+                else                        n = getNaa(*fraction1);
+
+                if(n > 0){
+                    if(n > fraction1->getN() || n > fraction2->getN()){
+                        n = (fraction1->getN() > fraction2->getN())? fraction2->getN():fraction1->getN();
+                    }
+                    // Пробуем найти фракцию с массой 'm'
+                    auto fraction = findFraction(fractions, m);
+                    // Если нашли, то увеличиваем кол-во её кластеров на 'n'
+                    if(fraction != fractions.end())          fraction->setN(fraction->getN()+n);
+                    else{
+                        // Аналогично проверяем есть ли в 'очереди' такая фракция
+                        fraction = findFraction(newFractions, m);
+                        // Если нашли, то увеличиваем кол-во её кластеров на 'n'
+                        if(fraction != newFractions.end())          fraction->setN(fraction->getN()+n);
+                        // Иначе добавляем эту фракцию в 'очередь'
+                        else                                        newFractions.push_back(Fraction(m, n));
+                    }
+
+                    // Уменьшаем массу фракций, которые учавствовали в слипании
+                    fraction1->setN(fraction1->getN() - n);
+                    fraction2->setN(fraction2->getN() - n);
+
+                    // Если фракции распались, то добавляем их в список для последующ. удаления
+                    if(fraction1->getN() <= 0)      fractionsForRemove.push_back(*fraction1);
+                    if(fraction2->getN() <= 0)      fractionsForRemove.push_back(*fraction2);
+                }
+            }
+        }
+    }
+    // Выполнилняем перестройку всех фракций, добавляя и удаляя ненужные
+    restructingOfFractions();
+}
+
 void Model::printFraction(){
-    for(std::list<Fraction>::iterator iter = fractions.begin(); iter != fractions.end(); iter++){
+    m = 0;
+    for(auto iter = fractions.begin(); iter != fractions.end(); iter++){
+        m += iter->getM() * iter->getN();
         std::cout << "{(" << iter->getM() << "|" << iter->getN() << ")}" << std::endl;
     }
-    std::cout << std::endl;
+    std::cout << "m = " << m << std::endl;
 }
 
 void Model::simulate(){
     for(int i = 0; i < N; i++){
         simulateOneStepForConglutination();
-        printFraction();
+        //printFraction();
     }
 }
