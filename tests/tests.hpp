@@ -9,36 +9,33 @@ private:
      * @brief   Проверка функции getProbabilityOfConvergence()
      * @return  Закрывает программу, если тест не пройден или возвращает 0
      */
-    int testGetProbabilityOfConvergence();
+    int test_getPab();
 
 
     /**
-     * @brief Проверка функции getNumberOfNewClustersInFraction
-     * @param fraction1     - первая фракция
-     * @param fraction2     - вторая фракция
-     * @param testChecker   - фракция которая должна получиться
-     * @return              Закрывает программу, если тест не пройден или возвращает 0
+     * @brief   Проверка функции getNab
+     * @return  Закрывает программу, если тест не пройден или возвращает 0
      */
-    int testGetNumberOfNewClustersInFraction(Fraction fraction1, Fraction fraction2, int testChecker);
+    int test_getNab();
 
 
     /**
-     * @brief Проверка функции addFractionInList
-     * @return                 Закрывает программу, если тест не пройден или возвращает 0
+     * @brief    Проверка функции getNaa
+     * @return   Закрывает программу, если тест не пройден или возвращает 0
      */
-    int testAddFractionInList();
+    int test_getNaa();
 
 
     /**
-     * @brief Проверка функции findFraction
-     * @return                 Закрывает программу, если тест не пройден или возвращает 0
+     * @brief    Проверка функции findFraction
+     * @return   Закрывает программу, если тест не пройден или возвращает 0
      */
     int testFindFraction();
 
 
     /**
-     * @brief Проверка функции restructingOfFractions
-     * @return                 Закрывает программу, если тест не пройден или возвращает 0
+     * @brief    Проверка функции restructingOfFractions
+     * @return   Закрывает программу, если тест не пройден или возвращает 0
      */
     int testRestructingOfFractions();
 
