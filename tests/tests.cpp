@@ -6,7 +6,7 @@
 #include "../src/model.hpp"
 #include "../src/fraction.hpp"
 
-Model model(100, 50, 1, 2, "/home/artem/C++/MathModeling/data/test_fractions.txt");
+Model model(100, 50, 1, 2, "../data/test_fractions.txt");
 
 int Test::testing(){
     test_getPab();
