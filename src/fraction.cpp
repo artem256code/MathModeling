@@ -12,3 +12,8 @@ bool Fraction::operator==(const Fraction two){
     if(m == two.m && n == two.n)    return true;
     return false;
 }
+
+bool Fraction::operator < (const Fraction two){
+    if(m < two.m)   return true;
+    return false;
+}

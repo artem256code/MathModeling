@@ -10,7 +10,7 @@ public:
     Fraction(int m, long long int n);
     ~Fraction();
     bool operator ==(const Fraction two);
-
+    bool operator < (const Fraction two);
     int getM();
     long long int getN();
 
