@@ -6,7 +6,7 @@
 #include "../src/model.hpp"
 #include "../src/fraction.hpp"
 
-Model model(100, 50, 1, 2, "../data/test_fractions.txt");
+Model model(100, 50, 1, 2, 0.0, 0.0, 0, 0, "/home/artem/C++/MathModeling/data/test_fractions.txt");
 
 int Test::testing(){
     test_getPab();
@@ -81,7 +81,8 @@ int Test::testRestructingOfFractions(){
         exit(EXIT_FAILURE);
     }
 
-    model.fractionsForRemove.push_back(Fraction(1, 2));
+    model.fractionsForRemove.push_back(Fraction(1, 0));
+    model.findFraction(model.fractions, 1)->setN(0);
     model.restructingOfFractions();
     model.fractionsForRemove.clear();
     if(model.findFraction(model.fractions, 1) != model.fractions.end()){
