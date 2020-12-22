@@ -14,7 +14,10 @@ private:
     int M;                                      // Объём вещества
     double Y;                                   // Вероятносто\временной коэф.
     int N;                                      // Kол-во прогонов
-    int numberOfFractions;                      // Текущее кол-во фракций
+    double a;                                   // Коэф. для распада
+    double b;                                   // Коэф. для распада
+    int ka;                                     // Кол-во кластеров создаваемых при распаде массы 'a'
+    int kb;                                     // Кол-во кластеров создаваемых при распаде массы 'b'
     int m;                                      // Масса всего вещества
     double p;                                   // Доля вещества в пространстве
     double S;                                   // Влияет на количество образуемых кластеров при перестройке
@@ -47,6 +50,33 @@ private:
      */
     int getNaa(Fraction fraction);
 
+    /**
+     * @brief getKm                 Вычисляет кол-во нераспавшихся кластеров
+     * @param m                     - Масса кластеров слипшихся фракций
+     * @param n                     - Кол-во кластеров слипшихся фракций
+     * @param ma                    - Масса распада
+     * @param mb                    - Масса распада
+     * @return
+     */
+    int getKm(int m, int n, int ma, int mb);
+
+    /**
+     * @brief getM                  Вычисляет выравнивающий фрагмент
+     * @param m                     - Масса кластеров слипшихся фракций
+     * @param n                     - Кол-во кластеров слипшихся фракций
+     * @param km                    - Кол-во нераспавшихся кластеров
+     * @param ma                    - Масса распада
+     * @param mb                    - Масса распада
+     * @return
+     */
+    int getM(int m, int n, int km, int ma, int mb);
+    int getRealM();
+    /**
+     * @brief changeFractions       Изменяет фракцию {(m | n)} на n
+     * @param m                     - Масса по которой происхдит поиск
+     * @param n                     - Кол-во на которое изменяется фракция
+     */
+    void changeFractions(int m, int n);
 
     /**
      * @brief restructingOfFractions  Перестраивает список фракций 'fracions', моделируя слипание
@@ -67,6 +97,8 @@ private:
      * @brief Симуляция одного шага моделирования программы
      */
     void simulateOneStepForConglutination();
+
+
 public:
     /**
      * @brief Конструктор, принимающий информацию о фракциях из файла
@@ -74,9 +106,13 @@ public:
      * @param M                 - Объём вещества
      * @param Y                 - Вероятностно/Временной коэф.
      * @param N                 - Кол-во прогонов
+     * @param a                 - Коэф. для распада
+     * @param b                 - Коэф. для распада
+     * @param ka                - Кол-во кластеров создаваемых при распаде массы 'a'
+     * @param kb                - Кол-во кластеров создаваемых при распаде массы 'b'
      * @param pathToFractions   - путь до файла с описанием фракций
      */
-    Model(int V, int M, double Y, int N, std::string pathToFractions);
+    Model(int V, int M, double Y, int N, double a, double b, int ka, int kb, std::string pathToFractions);
 
 
     /**
