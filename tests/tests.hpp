@@ -5,39 +5,26 @@
 
 class Test{
 private:
-    /**
-     * @brief   Проверка функции getProbabilityOfConvergence()
-     * @return  Закрывает программу, если тест не пройден или возвращает 0
-     */
+
+    int test_getM();
+
+    int test_getN();
+
     int test_getPab();
 
-
-    /**
-     * @brief   Проверка функции getNab
-     * @return  Закрывает программу, если тест не пройден или возвращает 0
-     */
     int test_getNab();
 
-
-    /**
-     * @brief    Проверка функции getNaa
-     * @return   Закрывает программу, если тест не пройден или возвращает 0
-     */
     int test_getNaa();
 
+    int test_getKm();
 
-    /**
-     * @brief    Проверка функции findFraction
-     * @return   Закрывает программу, если тест не пройден или возвращает 0
-     */
-    int testFindFraction();
+    int test_getM_();
 
+    int test_findFraction();
 
-    /**
-     * @brief    Проверка функции restructingOfFractions
-     * @return   Закрывает программу, если тест не пройден или возвращает 0
-     */
-    int testRestructingOfFractions();
+    int test_changeFraction();
+
+    int test_restructingOfFractions();
 
 public:
     /**

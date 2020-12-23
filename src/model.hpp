@@ -26,10 +26,24 @@ private:
     std::list<Fraction> fractionsForRemove;     // Список фракций для удаления
 private:
     /**
-     * @brief getPab                        Вероятность критического сближения двух кластеров
-     * @param ma                            - Вес первого кластера
-     * @param mb                            - Вес второго кластера
-     * @return                              Возвращает вероятность
+     * @brief parseFractionFromFile        Заполняет список 'fractions'
+     * @param pathToFractions              - Путь к файлу с фракциями
+     */
+    void parseFractionFromFile(std::string pathToFractions);
+
+
+    /**
+     * @brief getM                  Вычисляет массу всего вещества
+     * @return                      Возвращает массу
+     */
+    int getM();
+
+
+    /**
+     * @brief getPab                Вероятность критического сближения двух кластеров
+     * @param ma                    - Вес первого кластера
+     * @param mb                    - Вес второго кластера
+     * @return                      Возвращает вероятность
      */
     double getPab(int ma, int mb);
 
@@ -50,6 +64,7 @@ private:
      */
     int getNaa(Fraction fraction);
 
+
     /**
      * @brief getKm                 Вычисляет кол-во нераспавшихся кластеров
      * @param m                     - Масса кластеров слипшихся фракций
@@ -60,6 +75,7 @@ private:
      */
     int getKm(int m, int n, int ma, int mb);
 
+
     /**
      * @brief getM                  Вычисляет выравнивающий фрагмент
      * @param m                     - Масса кластеров слипшихся фракций
@@ -69,19 +85,25 @@ private:
      * @param mb                    - Масса распада
      * @return
      */
-    int getM(int m, int n, int km, int ma, int mb);
-    int getRealM();
-    /**
-     * @brief changeFractions       Изменяет фракцию {(m | n)} на n
-     * @param m                     - Масса по которой происхдит поиск
-     * @param n                     - Кол-во на которое изменяется фракция
-     */
-    void changeFractions(int m, int n);
+    int getM_(int m, int n, int km, int ma, int mb);
+
 
     /**
-     * @brief restructingOfFractions  Перестраивает список фракций 'fracions', моделируя слипание
+     * @brief getN                  Вычисляет кол-во новых кластеров
+     * @param fraction1             - Первая фракция участвующая в слипании
+     * @param fraction2             - Вторая фракция участвующая в слипании
+     * @return                      Возвращает кол-во кластеров
      */
-    void restructingOfFractions();
+    int getN(std::list<Fraction>::iterator fraction1, std::list<Fraction>::iterator fraction2);
+
+
+    /**
+     * @brief randomSimulate        Высчитвает вероятность попадания
+     * @param ma                    - Масса первой фракции
+     * @param mb                    - Масса второй фракции
+     * @return                      Возвращает 'true' если слипание произошло, иначе 'false'
+     */
+    bool randomSimulate(int ma, int mb);
 
 
     /**
@@ -94,10 +116,23 @@ private:
 
 
     /**
+     * @brief changeFractions       Изменяет фракцию {(m | n)} на n
+     * @param m                     - Масса по которой происхдит поиск
+     * @param n                     - Кол-во на которое изменяется фракция
+     */
+    void changeFraction(int m, int n);
+
+
+    /**
+     * @brief restructingOfFractions  Перестраивает список 'fracions'
+     */
+    void restructingOfFractions();
+
+
+    /**
      * @brief Симуляция одного шага моделирования программы
      */
-    void simulateOneStepForConglutination();
-
+    void simulateOneStep();
 
 public:
     /**
@@ -116,9 +151,9 @@ public:
 
 
     /**
-     * @brief printFraction     Распечатывает фракции
+     * @brief printFractions     Распечатывает фракции
      */
-    void printFraction();
+    void printFractions();
 
 
     /**
