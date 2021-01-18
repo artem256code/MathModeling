@@ -5,25 +5,15 @@
 
 class Test{
 private:
-
     int test_getM();
-
     int test_getN();
-
     int test_getPab();
-
     int test_getNab();
-
     int test_getNaa();
-
     int test_getKm();
-
     int test_getM_();
-
     int test_findFraction();
-
     int test_changeFraction();
-
     int test_restructingOfFractions();
 
 public:
