@@ -7,8 +7,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(MathModeling
     src/fraction.cpp
+    src/fraction.hpp
     src/main.cpp
     src/model.cpp
+    src/model.hpp
     tests/tests.cpp
+    tests/tests.hpp
     )
 
