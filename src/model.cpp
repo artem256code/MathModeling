@@ -4,7 +4,6 @@
 #include <cstring>
 #include <cmath>
 #include <stdio.h>
-#include <experimental/random>
 #include "model.hpp"
 
 void Model::parseFractionFromFile(std::string pathToFractions){
@@ -47,7 +46,6 @@ int Model::getM(){
 Model::Model(int V, int M, double Y, int N, double a, double b, int ka, int kb, std::string pathToFractions):
     V(V), M(M), Y(Y), N(N), a(a), b(b), ka(ka), kb(kb){
 
-    std::experimental::reseed(N);           // Привязываем ГПСЧ к кол-ву прогонов
     p = M / (double) V;                     // Рассчитываем долю
     parseFractionFromFile(pathToFractions); // Заполняем список с фракциями
     m = getM();                             // Получаем суммарную массу вещества
@@ -87,17 +85,6 @@ int Model::getN(std::list<Fraction>::iterator fraction1, std::list<Fraction>::it
         n = (fraction1->getN() > fraction2->getN())? fraction2->getN():fraction1->getN();
     }
     return n;
-}
-
-
-bool Model::randomSimulate(int ma, int mb){
-    // Вычислили вероятность сближения двух кластеров из фракций 'fraction1' и 'fraction2'
-    double p = getPab(ma, mb);
-    // Вероятность попадания в вероятность
-    double rand = std::experimental::randint(0, 100) / (double) m;
-    // Если попали в вероятность
-    if(p >= rand)   return true;
-    return false;       // Если не попали в вероятность
 }
 
 
@@ -152,42 +139,39 @@ void Model::simulateOneStep(){
         for(auto fraction2 = fraction1; fraction2 != fractions.end(); fraction2++){
             if(fraction2->getN() <= 0) continue; // Если в данной фракции нет кластеров;
 
-            // Если попали в вероятность, то перестраиваем кластеры, симулируя слипание
-            if(randomSimulate(fraction1->getM(), fraction2->getM())){
-                int m = fraction1->getM() + fraction2->getM();  // Масса новой фракции
-                int n = getN(fraction1, fraction2);             // Кол-во кластеров в ней
+            int m = fraction1->getM() + fraction2->getM();  // Масса новой фракции
+            int n = getN(fraction1, fraction2);             // Кол-во кластеров в ней
 
-                int ma = m*a;                                   // Масса новой распавш. фракции 'a'
-                int mb = m*b;                                   // Масса новой распавш. фракции 'b'
-                int km = getKm(m, n, ma, mb);                   // Кол-во нераспавшихся класетров
+            int ma = m*a;                                   // Масса новой распавш. фракции 'a'
+            int mb = m*b;                                   // Масса новой распавш. фракции 'b'
+            int km = getKm(m, n, ma, mb);                   // Кол-во нераспавшихся класетров
 
-                // Моделируем чисто слипание
-                if(km == n){
-                    changeFraction(m, n);
+            // Моделируем чисто слипание
+            if(km == n){
+                changeFraction(m, n);
+            }
+            // Моделируем слипание с распадом
+            else{
+                if(ma * ka + mb * kb <= m * n){
+                    int m_ = getM_(m, n, km, ma, mb);       // Масса выравнивающего фрагмента
+                    changeFraction(ma, ka);
+                    changeFraction(mb, kb);
+                    changeFraction(m, km);
+                    changeFraction(m_, 1);
                 }
-                // Моделируем слипание с распадом
-                else{
-                    if(ma * ka + mb * kb <= m * n){
-                        int m_ = getM_(m, n, km, ma, mb);       // Масса выравнивающего фрагмента
-                        changeFraction(ma, ka);
-                        changeFraction(mb, kb);
-                        changeFraction(m, km);
-                        changeFraction(m_, 1);
-                    }
-                }
+            }
 
-                // Уменьшаем массу фракций, которые учавствовали в слипании
-                fraction1->setN(fraction1->getN() - n);
-                fraction2->setN(fraction2->getN() - n);
+            // Уменьшаем массу фракций, которые учавствовали в слипании
+            fraction1->setN(fraction1->getN() - n);
+            fraction2->setN(fraction2->getN() - n);
 
 
-                // Если фракции распались, то добавляем их в список для последующ. удаления
-                if(fraction1->getN() <= 0 && findFraction(fractionsForRemove, fraction1->getM()) == fractionsForRemove.end()){
-                    fractionsForRemove.push_back(*fraction1);
-                }
-                if(fraction2->getN() <= 0 && findFraction(fractionsForRemove, fraction2->getM()) == fractionsForRemove.end()){
-                    fractionsForRemove.push_back(*fraction2);
-                }
+            // Если фракции распались, то добавляем их в список для последующ. удаления
+            if(fraction1->getN() <= 0 && findFraction(fractionsForRemove, fraction1->getM()) == fractionsForRemove.end()){
+                fractionsForRemove.push_back(*fraction1);
+            }
+            if(fraction2->getN() <= 0 && findFraction(fractionsForRemove, fraction2->getM()) == fractionsForRemove.end()){
+                fractionsForRemove.push_back(*fraction2);
             }
         }
     }
