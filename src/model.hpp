@@ -26,13 +26,6 @@ private:
     std::list<Fraction> fractionsForRemove;     // Список фракций для удаления
 private:
     /**
-     * @brief parseFractionFromFile        Заполняет список 'fractions'
-     * @param pathToFractions              - Путь к файлу с фракциями
-     */
-    void parseFractionFromFile(std::string pathToFractions);
-
-
-    /**
      * @brief getM                  Вычисляет массу всего вещества
      * @return                      Возвращает массу
      */
@@ -155,6 +148,10 @@ public:
      */
     void printFractions();
 
+    /**
+     * @brief writeFractions    Записывает фракции в файл (out.txt)
+     */
+    void writeFractions();
 
     /**
      * @brief Запуск моделирования

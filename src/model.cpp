@@ -1,38 +1,10 @@
-#include <fstream>
 #include <iostream>
-#include <sstream>
 #include <cstring>
 #include <cmath>
 #include <stdio.h>
+
 #include "model.hpp"
-
-void Model::parseFractionFromFile(std::string pathToFractions){
-    std::ifstream fileWithFractions(pathToFractions);
-    // Если файл не найден
-    if(!fileWithFractions) {
-        std::cout << "Файл не найден: " << pathToFractions <<  std::endl;
-        exit(EXIT_FAILURE);
-    }
-
-    std::string tmpStr;
-    // Парсим кол-во фракций
-    getline(fileWithFractions, tmpStr);
-    int numberOfFractions = std::stoi(tmpStr);
-
-    // Парсим сами фракции и записываем их в list
-    std::string num;                // Текущее полученное число
-    int numbers[2];                 // Вес и кол-во
-    for(int i = 0; i < numberOfFractions; i++){
-        getline(fileWithFractions, tmpStr);
-        std::stringstream ss(tmpStr);           // Строковый поток
-        for(int j = 0; j < 2; j++){
-            ss >> num;
-            numbers[j] = std::stoi(num);
-        }
-        fractions.push_back(Fraction(numbers[0], numbers[1]));    // Заполнили фракцию и добавили в список
-    }
-}
-
+#include "io.hpp"
 
 int Model::getM(){
     int m = 0;
@@ -46,10 +18,10 @@ int Model::getM(){
 Model::Model(int V, int M, double Y, int N, double a, double b, int ka, int kb, std::string pathToFractions):
     V(V), M(M), Y(Y), N(N), a(a), b(b), ka(ka), kb(kb){
 
-    p = M / (double) V;                     // Рассчитываем долю
-    parseFractionFromFile(pathToFractions); // Заполняем список с фракциями
-    m = getM();                             // Получаем суммарную массу вещества
-    S = Y * p / m;                          // Вычисляем коэфицент 'S'
+    p = M / (double) V;                                 // Рассчитываем долю
+    fractions = parseFractionsFromFile(pathToFractions);// Заполняем список с фракциями
+    m = getM();                                         // Получаем суммарную массу вещества
+    S = Y * p / m;                                      // Вычисляем коэфицент 'S'
 }
 
 
@@ -89,7 +61,7 @@ int Model::getN(std::list<Fraction>::iterator fraction1, std::list<Fraction>::it
 
 
 std::list<Fraction>::iterator Model::findFraction(std::list<Fraction> &list, int m){
-    for(std::list<Fraction>::iterator iter = list.begin(); iter != list.end(); iter++){
+    for(auto iter = list.begin(); iter != list.end(); iter++){
         if(iter->getM() == m)   return iter;
     }
     return list.end();
@@ -187,6 +159,10 @@ void Model::printFractions(){
     std::cout << "m = " << getM() << std::endl;
 }
 
+
+void Model::writeFractions(){
+    writeFractionsInFile(fractions);
+}
 
 void Model::simulate(){
     for(int i = 0; i < N; i++){
