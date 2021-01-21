@@ -44,4 +44,5 @@ pyplot.bar(x4, y4)
 pyplot.xlabel('Масса фракции')
 pyplot.ylabel('Объём фракции')
 
+pyplot.gcf().canvas.set_window_title("Гистограммы")
 pyplot.show()
