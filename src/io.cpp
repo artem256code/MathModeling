@@ -14,15 +14,12 @@ std::list<Fraction> parseFractionsFromFile(std::string pathToFractions){
         exit(EXIT_FAILURE);
     }
 
-    std::string tmpStr;
-    // Парсим кол-во фракций
-    getline(fileWithFractions, tmpStr);
-    int numberOfFractions = std::stoi(tmpStr);
 
     // Парсим сами фракции и записываем их в list
+    std::string tmpStr;
     std::string num;                // Текущее полученное число
     int numbers[2];                 // Вес и кол-во
-    for(int i = 0; i < numberOfFractions; i++){
+    while(!fileWithFractions.eof()){
         getline(fileWithFractions, tmpStr);
         std::stringstream ss(tmpStr);           // Строковый поток
         for(int j = 0; j < 2; j++){
