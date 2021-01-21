@@ -8,7 +8,7 @@
 #include "../src/fraction.hpp"
 
 // Модель для тестов
-Model model(100, 50, 1, 2, 0.1, 0.2, 2, 1, "../MathModeling/data/test_fractions.txt");
+Model model(100, 50, 1, 2, 0.1, 0.2, 2, 1, "tests/test_fractions.txt");
 
 int Test::testing(){
     test_getM();
@@ -26,7 +26,7 @@ int Test::testing(){
 
 int Test::test_getM(){
     int testChecker = model.getM();
-
+    std::cout << testChecker << std::endl;
     assert(testChecker == 90);
     return 0;
 }
