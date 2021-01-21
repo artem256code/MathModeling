@@ -10,7 +10,7 @@ std::list<Fraction> parseFractionsFromFile(std::string pathToFractions){
     std::ifstream fileWithFractions(pathToFractions);
     // Если файл не найден
     if(!fileWithFractions) {
-        std::cout << "Файл не найден: " << pathToFractions <<  std::endl;
+        std::cout << "File not found: " << pathToFractions <<  std::endl;
         exit(EXIT_FAILURE);
     }
 

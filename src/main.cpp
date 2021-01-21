@@ -11,7 +11,7 @@ int main(){
     int ka, kb;     // Кол-во кластеров создаваемых при распаде массы 'a' и массы 'b'
     std::string pathToFile = "input.txt";
 
-    std::cout << "Введите V, M, Y, N, a, b, ka, kb:" << std::endl;
+    std::cout << "Write: V, M, Y, N, a, b, ka, kb:" << std::endl;
     std::cin >> V >> M >> Y >> N >> a >> b >> ka >> kb;
 
     Model model(V, M, Y, N, a, b, ka, kb, pathToFile);
