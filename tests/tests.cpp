@@ -26,7 +26,7 @@ int Test::testing(){
 
 int Test::test_getM(){
     int testChecker = model.getM();
-    std::cout << testChecker << std::endl;
+
     assert(testChecker == 90);
     return 0;
 }
