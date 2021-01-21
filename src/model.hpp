@@ -5,8 +5,6 @@
 #include <list>
 
 #include "fraction.hpp"
-#include "../tests/tests.hpp"
-
 
 class Model{
 private:
@@ -157,8 +155,6 @@ public:
      * @brief Запуск моделирования
      */
     void simulate();
-
-    friend Test;
 };
 
 #endif

@@ -1,11 +1,8 @@
 #include <iostream>
 
 #include "model.hpp"
-#include "../tests/tests.hpp"
 
 int main(){
-    Test test;
-    test.testing();
 
     int V, M;       // Объём пространства, объём вещества
     double Y;       // Вероятносто\временной коэф.,
