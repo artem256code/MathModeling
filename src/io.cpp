@@ -35,10 +35,10 @@ std::list<Fraction> parseFractionsFromFile(std::string pathToFractions){
 
 void writeFractionsInFile(std::list<Fraction> fractions){
     // Сначала очищаем файл
-    std::ofstream file("data/out.txt");
+    std::ofstream file("out.txt");
     file.close();
     // После записываем фракции в файл
-    std::ofstream fileWithFractions("data/out.txt", std::ios::app);
+    std::ofstream fileWithFractions("out.txt", std::ios::app);
     if(fileWithFractions.is_open()){
         for(auto fraction = fractions.begin(); fraction!= fractions.end(); fraction++){
             fileWithFractions << (*fraction).getM() << " " << (*fraction).getN() << std::endl;
